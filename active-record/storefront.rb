@@ -69,4 +69,5 @@ User.create(first_name: "Laura", last_name: "Montgomery", email: "laura@bbbc.com
 lm = User.where("user_id = 51")
 puts "#{lm.first_name} #{lm.last_name}"
 
-Order.create(user_id: 51, item_id: 58, quantity: 1, created_at: Time.now)
+order = Order.create(user_id: 51, item_id: 58, quantity: 1, created_at: Time.now)
+puts order
