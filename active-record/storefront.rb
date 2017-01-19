@@ -56,5 +56,17 @@ puts  "The addresses: #{another.pluck :street, :city, :state, :zip}"
 puts "How much would it cost to buy one of each tool?"
 puts "#{Item.where("category LIKE '%tools%'").sum(:price)}"
 
+puts "How many total items did we sell?"
+puts "#{Order.sum(:quantity)}"
 
+puts "How much was spent on books?"
 
+total = Order.joins(:item).where("category LIKE '%Books%'").sum("quantity * price")
+puts total
+
+puts "Simulate buying an item by inserting a User for yourself and an Order for that User."
+User.create(first_name: "Laura", last_name: "Montgomery", email: "laura@bbbc.com")
+lm = User.where("user_id = 51")
+puts "#{lm.first_name} #{lm.last_name}"
+
+Order.create(user_id: 51, item_id: 58, quantity: 1, created_at: Time.now)
