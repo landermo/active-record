@@ -23,7 +23,7 @@ class Order < ActiveRecord::Base
 end
 
 class User < ActiveRecord::Base
-
+  has_many :addresses
 end
 
 puts "How many users are there?"
@@ -40,4 +40,21 @@ puts "Answer: #{Item.where("category LIKE '%Books%'").order('price ASC').limit(1
 
 puts "Who lives at '6439 Zetta Hills, Willmouth, WY'? Do they have another address?"
 
-puts "Answer: #{}"
+person = User.includes(:addresses).where('addresses.street' => '6439 Zetta Hills').first
+puts "Answer: #{person.first_name} #{person.last_name}"
+
+puts "Do they have another address?"
+
+other = Address.where("user_id = 40").last
+puts "Answer: The other address is #{other.street}, #{other.city}, #{other.state}, #{other.zip}"
+
+puts "Correct Virginie Mitchell's address to 'New York, NY, 10108'"
+another = Address.where("user_id = 40")
+another.update_all(city: 'New York', state: 'NY', zip: 10108)
+puts  "The addresses: #{another.pluck :street, :city, :state, :zip}"
+
+puts "How much would it cost to buy one of each tool?"
+puts "#{Item.where("category LIKE '%tools%'").sum(:price)}"
+
+
+
