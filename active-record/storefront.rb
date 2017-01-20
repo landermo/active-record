@@ -65,9 +65,34 @@ total = Order.joins(:item).where("category LIKE '%Books%'").sum("quantity * pric
 puts total
 
 puts "Simulate buying an item by inserting a User for yourself and an Order for that User."
-User.create(first_name: "Laura", last_name: "Montgomery", email: "laura@bbbc.com")
-lm = User.where("user_id = 51")
-puts "#{lm.first_name} #{lm.last_name}"
+# User.create(first_name: "Laura", last_name: "Montgomery", email: "laura@bbbc.com")
+# lm = User.where("user_id = 51")
+# puts "#{lm.first_name} #{lm.last_name}"
+#
+# order = Order.create(user_id: 51, item_id: 58, quantity: 1, created_at: Time.now)
+# puts order
 
-order = Order.create(user_id: 51, item_id: 58, quantity: 1, created_at: Time.now)
-puts order
+# OR lm.orders << Order.new(item: item, quantity: 23)
+
+puts "What item was ordered most often?"
+
+puts "#{Order.group(:item_id).having('COUNT(*) >= 9').pluck :item_id}"
+
+  often = Order.group(:item).sum(:quantity).max_by{|key, value| value}
+  puts "#{often.first.title}"
+
+puts "Grossed the most money?"
+
+totals = Order.group(:item).joins(:item).order('sum_quantity_all_price desc').limit(1).sum("quantity * price")
+puts  "#{totals.keys.first.title}"
+
+puts "What user spent the most?"
+total = Order.joins(:item).sum("quantity * price")
+
+spent = User.all.max_by{|key, total| total}
+puts "#{spent.first_name} #{spent.last_name}"
+
+
+puts "What were the top 3 highest grossing categories?"
+category = Item.joins(:orders).group(:category).order("sum_price_all_quantity DESC").limit(3).sum("price * quantity")
+puts "#{category}"
